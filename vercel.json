@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/divisionbfivestar", "destination": "/index.html" },
+    { "source": "/divisionbfivestaradmin", "destination": "/admin.html" }
+  ]
+}
