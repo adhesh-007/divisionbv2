@@ -510,7 +510,7 @@ function renderAreaComparison(){
         <tbody>
           ${scored.map((r,i)=>`
             <tr${i===0 && r.composite!==null ? ' style="background:var(--sage-bg);"' : ''}>
-              <td>${i===0 && r.composite!==null ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : i+1}</td>
+              <!--<td>${i===0 && r.composite!==null ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : i+1}</td>-->
               <td><strong>${escapeHtml(r.area)}</strong></td>
               <td>${escapeHtml(r.director)}</td>
               <td>${r.clubs}</td>
