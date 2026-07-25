@@ -506,7 +506,7 @@ function renderAreaComparison(){
       <h3>Division B — Area Leaderboard</h3>
       <p class="page-sub" style="margin-bottom:14px;">Ranked by composite score (average of 5-Star rate, Pathways adoption, and Mentor coverage).</p>
       <table>
-        <thead><tr><th>Rank</th><th>Area</th><th>Director</th><th>Clubs</th><th>Meetings Logged</th><th>5-Star Rate</th><th>Pathways</th><th>Mentor</th><th>Composite</th><th>Flagged Clubs</th></tr></thead>
+        <thead><tr><th>Area</th><th>Director</th><th>Clubs</th><th>Meetings Logged</th><th>5-Star Rate</th><th>Pathways</th><th>Mentor</th><th>Composite</th><th>Flagged Clubs</th></tr></thead>
         <tbody>
           ${scored.map((r,i)=>`
             <tr${i===0 && r.composite!==null ? ' style="background:var(--sage-bg);"' : ''}>
