@@ -38,7 +38,7 @@
   h2.page-title{font-family:'Fraunces',serif;font-weight:600;font-size:26px;margin:0 0 4px;}
   .page-sub{color:var(--text-muted);margin:0 0 22px;font-size:13.5px;}
 
-  .stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;}
+  .stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:26px;}
   .stat-card{background:var(--paper-2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;}
   .stat-card .label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);font-weight:600;}
   .stat-card .value{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-top:6px;color:var(--ink-2);}
