@@ -260,9 +260,13 @@ function renderOverview(){
   const fiveStarRate = pct(fiveStarCount, allMeetings.length);
   const pathwaysAvg = avgLatestPct(state.pathways, r=>pct(r.active, r.total));
   const mentorAvg = avgLatestPct(state.mentors, r=>pct(r.assigned, r.total));
+  const { totalMembers, membersAsOf } = divisionTotalMembers();
+  const retentionPct = divisionRetentionPct();
 
   document.getElementById('statStrip').innerHTML = `
     <div class="stat-card"><div class="label">Clubs Tracked</div><div class="value">${totalClubs}</div><div class="sub">Division B</div></div>
+    <div class="stat-card"><div class="label">Total Membership</div><div class="value">${totalMembers===null?'—':totalMembers}</div><div class="sub">${membersAsOf?'latest strength logged per club':'no strength logged yet'}</div></div>
+    <div class="stat-card"><div class="label">Retention</div><div class="value">${retentionPct===null?'—':retentionPct+'%'}</div><div class="sub">month-over-month, clubs with 2+ months logged</div></div>
     <div class="stat-card"><div class="label">5-Star Meeting Rate</div><div class="value">${fiveStarRate===null?'—':fiveStarRate+'%'}</div><div class="sub">${allMeetings.length} meetings logged</div></div>
     <div class="stat-card"><div class="label">Pathways Adoption</div><div class="value">${pathwaysAvg===null?'—':pathwaysAvg+'%'}</div><div class="sub">avg across clubs, latest month</div></div>
     <div class="stat-card"><div class="label">Mentor Coverage</div><div class="value">${mentorAvg===null?'—':mentorAvg+'%'}</div><div class="sub">avg across clubs, latest month</div></div>
@@ -692,6 +696,29 @@ function clubGrowth(club){
   const delta = previous ? latest.strength - previous.strength : null;
   const deltaPct = previous && previous.strength>0 ? Math.round((delta/previous.strength)*1000)/10 : null;
   return { latest, previous, delta, deltaPct };
+}
+// Sum of each club's latest logged strength (total members across the division).
+function divisionTotalMembers(){
+  if(state.clubs.length===0) return { totalMembers: null, membersAsOf: false };
+  let sum = 0, any = false;
+  state.clubs.forEach(c=>{
+    const g = clubGrowth(c.name);
+    if(g.latest){ sum += g.latest.strength; any = true; }
+  });
+  return { totalMembers: any ? sum : null, membersAsOf: any };
+}
+// Division-wide retention: sum(latest strength) / sum(previous strength) for clubs
+// that have at least two months logged. This measures month-over-month persistence
+// of total membership (new joins can offset losses) — not per-member renewal rate,
+// since renewal/departure isn't tracked separately from total strength.
+function divisionRetentionPct(){
+  let latestSum = 0, previousSum = 0, any = false;
+  state.clubs.forEach(c=>{
+    const g = clubGrowth(c.name);
+    if(g.latest && g.previous){ latestSum += g.latest.strength; previousSum += g.previous.strength; any = true; }
+  });
+  if(!any || previousSum===0) return null;
+  return Math.round((latestSum/previousSum)*1000)/10;
 }
 function renderStrength(){
   const wrap = document.getElementById('strengthTableWrap');
