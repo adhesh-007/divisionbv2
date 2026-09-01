@@ -14,7 +14,7 @@ with almost no configuration.
 - **Admin link** — `https://<your-project>.vercel.app/divisionbfivestaradmin`
   Asks for a username/password before showing anything. Once signed in,
   every "add / edit / delete" control in the app is unlocked.
-  Default login: **username `divb`, password `Adhesh@db`** (see below to change it).
+  Default login: **username `*****`, password `*******`** (see below to change it).
 
 Both pages read and write the *same* shared data — an admin change shows up
 on the public link within seconds.
