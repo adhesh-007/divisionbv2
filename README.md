@@ -55,7 +55,7 @@ installed the same way:
 
 ## 4. (Recommended) Set your own admin credentials & session secret
 
-By default the admin login is `divb` / `Adhesh@db`, signed with a
+By default the admin login is `*****` / `*****`, signed with a
 built-in fallback secret. To set your own:
 
 In **Project Settings → Environment Variables**, add:
@@ -93,3 +93,6 @@ what you asked for.
   data at scale.
 - **Free tier is plenty** for a Division's worth of clubs — Upstash's free
   tier covers far more reads/writes than this app will generate.
+
+
+  **Developed by Adhesh**
