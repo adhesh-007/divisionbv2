@@ -24,6 +24,8 @@
       <button data-view="pathways"><span class="dot"></span>Pathways Adoption</button>
       <button data-view="mentors"><span class="dot"></span>Mentor Assignment</button>
       <button data-view="strength"><span class="dot"></span>Attendance &amp; Strength</button>
+      <button data-view="badges"><span class="dot"></span>Education Badges</button>
+      <button data-view="successplan"><span class="dot"></span>Club Success Plan</button>
       <button data-view="clubs"><span class="dot"></span>Manage Clubs &amp; Areas</button>
     </nav>
     <button id="exportExcelBtn" style="all:unset;cursor:pointer;background:var(--gold);color:var(--ink);font-weight:700;font-size:13px;padding:10px 12px;border-radius:8px;text-align:center;">⬇ Export to Excel</button>
@@ -154,6 +156,43 @@
       </div>
     </section>
 
+    <!-- EDUCATION BADGES -->
+    <section class="view" id="view-badges">
+      <h2 class="page-title">Education Achievements</h2>
+      <p class="page-sub">Pathways levels, awards, and other education achievements members complete — logged per club as they're earned.</p>
+      <div class="admin-banner">🔒 You're viewing in read-only mode. Log in as admin (sidebar) to add or remove records.</div>
+      <div class="panel admin-only">
+        <h3>Log an achievement</h3>
+        <form class="entry-form" id="form-badges">
+          <div class="field"><label>Club</label><select name="club" required></select></div>
+          <div class="field"><label>Date</label><input type="date" name="date" required></div>
+          <div class="field"><label>Award / level</label><input type="text" name="award" placeholder="e.g. Pathways Level 2, DTM" required></div>
+          <div class="field"><label># of members (if more than 1)</label><input type="number" name="count" min="1" value="1" required></div>
+          <button class="primary" type="submit">Add achievement</button>
+        </form>
+      </div>
+      <div class="panel"><h3>Achievement log</h3><div id="badgesTableWrap"></div></div>
+    </section>
+
+    <!-- CLUB SUCCESS PLAN -->
+    <section class="view" id="view-successplan">
+      <h2 class="page-title">Club Success Plan</h2>
+      <p class="page-sub">Submission status of each club's annual Club Success Plan to the district.</p>
+      <div class="admin-banner">🔒 You're viewing in read-only mode. Log in as admin (sidebar) to add or update records.</div>
+      <div class="panel admin-only">
+        <h3>Log submission status</h3>
+        <form class="entry-form" id="form-successplan">
+          <div class="field"><label>Club</label><select name="club" required></select></div>
+          <div class="field"><label>Program year / period</label><input type="text" name="period" placeholder="e.g. 2026-2027" required></div>
+          <div class="field"><label>Status</label>
+            <select name="status" required><option value="Submitted">Submitted</option><option value="Not Submitted">Not Submitted</option></select></div>
+          <div class="field"><label>Notes (optional)</label><input type="text" name="notes" placeholder="e.g. submitted late, pending review"></div>
+          <button class="primary" type="submit">Save status</button>
+        </form>
+      </div>
+      <div class="panel"><h3>Submission log</h3><div id="successPlanTableWrap"></div></div>
+    </section>
+
     <!-- CLUBS & AREAS -->
     <section class="view" id="view-clubs">
       <h2 class="page-title">Manage Clubs &amp; Areas</h2>
@@ -178,7 +217,7 @@
 28677389, Western Ghats Coimbatore Toastmasters Club, B1
 7944329, VCEW Toastmasters Club, B1
 28679724, Karpagam Tech Toastmasters Club, B1
-7934411, SEIPL Alpha Coimbatore Toastmasters Club, B2
+7934411, Lauritz Knudsen Coimbatore Toastmasters Club, B2
 28678844, Sri Eshwar Toastmasters Club - Chapter 2, B2
 6938059, Sri Eshwar Toastmasters Club, B2
 28679730, Karpagam College of Engineering Toastmasters, B2
@@ -186,11 +225,13 @@
 4469699, Coimbatore Speakers Forum, B3
 6005672, KIT Toastmasters Club, B3
 28677948, Infosys Coimbatore Toastmasters Club, B3
+28677052, PSC Toastmasters Club, B3
 28678484, Speak Up Salem Toastmasters Club, B4
 7217134, Pyrocity Toastmasters Club, B4
 7400685, Tuticorin Toastmasters, B4
 5359135, Nagercoil Toastmasters, B4
-28675904, Stella Mary's Toastmasters Kanyakumari, B4</textarea>
+28675904, Stella Mary's Toastmasters Kanyakumari, B4
+28680577, Nelveli Toastmasters Club, B4</textarea>
         </div>
         <button class="primary" id="bulkAddBtn" type="button">Add these clubs</button>
         <span id="bulkAddMsg" style="font-size:12px;color:var(--text-muted);margin-left:10px;"></span>
