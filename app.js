@@ -1,7 +1,7 @@
 // ============================================================
 // STATE + API
 // ============================================================
-let state = { clubs: [], meetings: [], pathways: [], mentors: [], directors: {}, strength: [] };
+let state = { clubs: [], meetings: [], pathways: [], mentors: [], directors: {}, strength: [], badges: [], successPlans: [] };
 let isAdmin = false; // only ever true on the admin page, after a verified server session
 
 const DEFAULT_DIRECTORS = { B1: "TM Karthick Rajendran", B2: "Atchayashiri", B3: "Jonathan", B4: "Sunita Rajaseelan" };
@@ -165,6 +165,13 @@ function clubFiveStarRate(clubName){
 }
 function clubPathwaysPct(clubName){ const r = latestByClub(state.pathways, clubName); return r ? pct(r.active, r.total) : null; }
 function clubMentorPct(clubName){ const r = latestByClub(state.mentors, clubName); return r ? pct(r.assigned, r.total) : null; }
+function clubBadgeCount(clubName){
+  return state.badges.filter(b=>b.club===clubName).reduce((s,b)=> s + (b.count||1), 0);
+}
+function clubLatestSuccessPlan(clubName){
+  const rows = state.successPlans.filter(r=>r.club===clubName).sort((a,b)=> a.period < b.period ? 1 : -1);
+  return rows[0] || null;
+}
 
 function computeClubStatus(clubName){
   const fs = clubFiveStarRate(clubName).rate;
@@ -262,6 +269,9 @@ function renderOverview(){
   const mentorAvg = avgLatestPct(state.mentors, r=>pct(r.assigned, r.total));
   const { totalMembers, membersAsOf } = divisionTotalMembers();
   const retentionPct = divisionRetentionPct();
+  const totalBadges = state.badges.reduce((s,b)=> s + (b.count||1), 0);
+  const latestPeriod = [...new Set(state.successPlans.map(r=>r.period))].sort().slice(-1)[0];
+  const submittedCount = latestPeriod ? state.successPlans.filter(r=>r.period===latestPeriod && r.status==='Submitted').length : 0;
 
   document.getElementById('statStrip').innerHTML = `
     <div class="stat-card"><div class="label">Clubs Tracked</div><div class="value">${totalClubs}</div><div class="sub">Division B</div></div>
@@ -270,6 +280,8 @@ function renderOverview(){
     <div class="stat-card"><div class="label">5-Star Meeting Rate</div><div class="value">${fiveStarRate===null?'—':fiveStarRate+'%'}</div><div class="sub">${allMeetings.length} meetings logged</div></div>
     <div class="stat-card"><div class="label">Pathways Adoption</div><div class="value">${pathwaysAvg===null?'—':pathwaysAvg+'%'}</div><div class="sub">avg across clubs, latest month</div></div>
     <div class="stat-card"><div class="label">Mentor Coverage</div><div class="value">${mentorAvg===null?'—':mentorAvg+'%'}</div><div class="sub">avg across clubs, latest month</div></div>
+    <div class="stat-card"><div class="label">Education Badges</div><div class="value">${totalBadges}</div><div class="sub">achievements logged, all-time</div></div>
+    <div class="stat-card"><div class="label">Success Plans Submitted</div><div class="value">${latestPeriod ? submittedCount+' / '+totalClubs : '—'}</div><div class="sub">${latestPeriod ? escapeHtml(latestPeriod) : 'no submissions logged yet'}</div></div>
   `;
 
   const grid = document.getElementById('clubGrid');
@@ -416,6 +428,8 @@ function renderClubDashboard(){
         <div class="meta">Club No. ${escapeHtml(clubObj.number)} · Area ${escapeHtml(clubObj.area)}${state.directors[clubObj.area] ? ' · Director: '+escapeHtml(state.directors[clubObj.area]) : ''}</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;">
+        <span class="pill flat" title="Education achievements logged">🎓 ${clubBadgeCount(club)} badge${clubBadgeCount(club)===1?'':'s'}</span>
+        ${(()=>{ const sp = clubLatestSuccessPlan(club); return sp ? `<span class="pill ${sp.status==='Submitted'?'sage':'clay'}" title="Success Plan, ${escapeHtml(sp.period)}">${escapeHtml(sp.status)}</span>` : ''; })()}
         <span class="status-badge pill ${statusPillClass(status)}">${status}</span>
         <button class="primary" id="exportClubBtn" type="button" style="background:var(--gold);color:var(--ink);">⬇ Export This Club</button>
       </div>
@@ -683,6 +697,34 @@ function renderMentors(){
     {label:'Coverage', render:r=>{ const p=pct(r.assigned,r.total); return `<span class="pill ${pillClass(p,90,60)}">${p}%</span>`; }},
   ], 'del-mentors');
 }
+function renderBadges(){
+  const wrap = document.getElementById('badgesTableWrap');
+  if(state.badges.length===0){ wrap.innerHTML = `<div class="empty">No education achievements logged yet.</div>`; return; }
+  const rows = [...state.badges].sort((a,b)=> a.date<b.date?1:-1);
+  wrap.innerHTML = `<table><thead><tr>
+    <th>Club</th><th>Date</th><th>Award / Level</th><th>Count</th><th></th>
+  </tr></thead><tbody>
+  ${rows.map(r=>`<tr>
+    <td>${escapeHtml(r.club)}</td><td>${r.date}</td><td>${escapeHtml(r.award)}</td><td>${r.count||1}</td>
+    <td><button class="ghost admin-only" data-del-badges="${r.id}">Remove</button></td>
+  </tr>`).join('')}
+  </tbody></table>`;
+}
+function renderSuccessPlan(){
+  const wrap = document.getElementById('successPlanTableWrap');
+  if(state.successPlans.length===0){ wrap.innerHTML = `<div class="empty">No Club Success Plan submissions logged yet.</div>`; return; }
+  const rows = [...state.successPlans].sort((a,b)=> a.period<b.period?1:-1);
+  wrap.innerHTML = `<table><thead><tr>
+    <th>Club</th><th>Period</th><th>Status</th><th>Notes</th><th></th>
+  </tr></thead><tbody>
+  ${rows.map(r=>`<tr>
+    <td>${escapeHtml(r.club)}</td><td>${escapeHtml(r.period)}</td>
+    <td><span class="pill ${r.status==='Submitted'?'sage':'clay'}">${escapeHtml(r.status)}</span></td>
+    <td>${escapeHtml(r.notes||'—')}</td>
+    <td><button class="ghost admin-only" data-del-successplan="${r.id}">Remove</button></td>
+  </tr>`).join('')}
+  </tbody></table>`;
+}
 
 // ---------- Club Strength (membership) helpers ----------
 function strengthHistory(club){
@@ -816,6 +858,8 @@ function renderAll(){
   renderMentors();
   renderStrength();
   renderAttendance();
+  renderBadges();
+  renderSuccessPlan();
   renderClubRoster();
   renderDirectors();
 }
@@ -870,6 +914,28 @@ document.getElementById('form-strength').addEventListener('submit', async (e)=>{
     e.target.reset(); renderAll();
   }catch(err){}
 });
+document.getElementById('form-badges').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  if(!requireAdmin()) return;
+  const f = new FormData(e.target);
+  if(!f.get('club')) return;
+  try{
+    await apiSend('/api/badges', 'POST', { club: f.get('club'), date: f.get('date'), award: f.get('award'), count: Number(f.get('count'))||1 });
+    await refreshState();
+    e.target.reset(); renderAll();
+  }catch(err){}
+});
+document.getElementById('form-successplan').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  if(!requireAdmin()) return;
+  const f = new FormData(e.target);
+  if(!f.get('club')) return;
+  try{
+    await apiSend('/api/success-plan', 'POST', { club: f.get('club'), period: f.get('period'), status: f.get('status'), notes: f.get('notes') });
+    await refreshState();
+    e.target.reset(); renderAll();
+  }catch(err){}
+});
 document.getElementById('form-club').addEventListener('submit', async (e)=>{
   e.preventDefault();
   if(!requireAdmin()) return;
@@ -915,6 +981,10 @@ document.addEventListener('click', async (e)=>{
   if(ds){ if(!requireAdmin()) return; try{ await apiSend('/api/strength?id='+encodeURIComponent(ds.dataset.delStrength), 'DELETE'); await refreshState(); renderAll(); }catch(err){} return; }
   const dc = e.target.closest('[data-del-club]');
   if(dc){ if(!requireAdmin()) return; try{ await apiSend('/api/clubs?name='+encodeURIComponent(dc.dataset.delClub), 'DELETE'); await refreshState(); renderAll(); }catch(err){} return; }
+  const db = e.target.closest('[data-del-badges]');
+  if(db){ if(!requireAdmin()) return; try{ await apiSend('/api/badges?id='+encodeURIComponent(db.dataset.delBadges), 'DELETE'); await refreshState(); renderAll(); }catch(err){} return; }
+  const dsp = e.target.closest('[data-del-successplan]');
+  if(dsp){ if(!requireAdmin()) return; try{ await apiSend('/api/success-plan?id='+encodeURIComponent(dsp.dataset.delSuccessplan), 'DELETE'); await refreshState(); renderAll(); }catch(err){} return; }
 });
 
 // ============================================================
@@ -1246,6 +1316,26 @@ function exportToExcel(){
   const wsStrengthLog = XLSX.utils.aoa_to_sheet(strengthRows);
   wsStrengthLog['!cols'] = [{wch:32},{wch:8},{wch:10},{wch:22},{wch:24}];
   XLSX.utils.book_append_sheet(wb, wsStrengthLog, 'Club Strength Log');
+
+  // --- Sheet 11: Education Achievements ---
+  const badgeRows = [['Club', 'Date', 'Award / Level', 'Count']];
+  [...state.badges].sort((a,b)=> a.date<b.date?1:-1).forEach(r=>{
+    badgeRows.push([r.club, r.date, r.award, r.count||1]);
+  });
+  if(badgeRows.length===1) badgeRows.push(['No achievements logged yet','','','']);
+  const wsBadges = XLSX.utils.aoa_to_sheet(badgeRows);
+  wsBadges['!cols'] = [{wch:32},{wch:12},{wch:28},{wch:8}];
+  XLSX.utils.book_append_sheet(wb, wsBadges, 'Education Achievements');
+
+  // --- Sheet 12: Club Success Plan ---
+  const spRows = [['Club', 'Period', 'Status', 'Notes']];
+  [...state.successPlans].sort((a,b)=> a.period<b.period?1:-1).forEach(r=>{
+    spRows.push([r.club, r.period, r.status, r.notes||'']);
+  });
+  if(spRows.length===1) spRows.push(['No submissions logged yet','','','']);
+  const wsSP = XLSX.utils.aoa_to_sheet(spRows);
+  wsSP['!cols'] = [{wch:32},{wch:12},{wch:14},{wch:40}];
+  XLSX.utils.book_append_sheet(wb, wsSP, 'Club Success Plan');
 
   XLSX.writeFile(wb, `Division_B_Club_Health_${today}.xlsx`);
 }
