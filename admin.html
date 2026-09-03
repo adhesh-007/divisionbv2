@@ -5,18 +5,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="/styles.css">
 <style>
   #loginGate{display:flex;min-height:100vh;align-items:center;justify-content:center;background:var(--paper);}
-  .login-card{background:var(--paper-2);border:1px solid var(--border);border-radius:14px;padding:36px 34px;width:100%;max-width:340px;box-shadow:0 10px 40px rgba(18,37,61,.08);}
-  .login-card .eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);}
-  .login-card h1{font-family:'Fraunces',serif;font-size:22px;margin:4px 0 22px;}
+  .login-card{background:var(--paper-2);border:1px solid var(--border);border-radius:14px;padding:36px 34px;width:100%;max-width:340px;box-shadow:0 10px 40px rgba(0,54,79,.1);}
+  .login-card .eyebrow{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);}
+  .login-card h1{font-family:'Montserrat',sans-serif;font-weight:700;font-size:21px;margin:4px 0 22px;color:var(--ink);}
   .login-card .field{margin-bottom:14px;}
-  .login-card label{font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:5px;}
-  .login-card input{width:100%;border:1px solid var(--border);border-radius:7px;padding:10px 11px;font-size:14px;font-family:'Inter',sans-serif;}
-  .login-card button{all:unset;cursor:pointer;display:block;width:100%;box-sizing:border-box;text-align:center;background:var(--ink-2);color:#fff;font-weight:700;font-size:14px;padding:11px;border-radius:8px;margin-top:6px;}
+  .login-card label{font-family:'Montserrat',sans-serif;font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:5px;}
+  .login-card input{width:100%;border:1px solid var(--border);border-radius:7px;padding:10px 11px;font-size:14px;font-family:'Source Sans 3',sans-serif;}
+  .login-card button{all:unset;cursor:pointer;display:block;width:100%;box-sizing:border-box;text-align:center;background:var(--ink-2);color:#fff;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;padding:11px;border-radius:8px;margin-top:6px;}
   .login-card button:hover{background:var(--ink);}
   .login-card button:disabled{opacity:.6;cursor:default;}
   .login-error{color:var(--clay);font-size:12.5px;min-height:16px;margin-top:10px;}
@@ -39,8 +39,9 @@
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <span class="eyebrow">Division B</span>
+      <span class="eyebrow">Division B &middot; Toastmasters</span>
       <h1>Club Health Console</h1>
+      <span class="tagline">Where Leaders Are Made&reg;</span>
     </div>
     <nav id="nav">
       <button data-view="overview" class="active"><span class="dot"></span>Overview</button>
@@ -240,7 +241,7 @@
         <h3>Bulk add clubs</h3>
         <p class="page-sub" style="margin-bottom:10px;">One club per line, as <code>Club No, Club Name, Area</code>.</p>
         <div class="field" style="margin-bottom:10px;">
-          <textarea id="bulkClubText" rows="6" style="width:100%;border:1px solid var(--border);border-radius:7px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:12.5px;resize:vertical;">7225106, SLB Coimbatore Toastmasters Club, B1
+          <textarea id="bulkClubText" rows="6" style="width:100%;border:1px solid var(--border);border-radius:7px;padding:10px;font-family:'Source Sans 3',sans-serif;font-size:12.5px;resize:vertical;">7225106, SLB Coimbatore Toastmasters Club, B1
 28677389, Western Ghats Coimbatore Toastmasters Club, B1
 7944329, VCEW Toastmasters Club, B1
 28679724, Karpagam Tech Toastmasters Club, B1
