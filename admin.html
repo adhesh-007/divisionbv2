@@ -193,10 +193,9 @@
         <h3>Log an achievement</h3>
         <form class="entry-form" id="form-badges">
           <div class="field"><label>Club</label><select name="club" required></select></div>
-          <div class="field"><label>Date</label><input type="date" name="date" required></div>
-          <div class="field"><label>Award / level</label><input type="text" name="award" placeholder="e.g. Pathways Level 2, DTM" required></div>
-          <div class="field"><label># of members (if more than 1)</label><input type="number" name="count" min="1" value="1" required></div>
-          <button class="primary" type="submit">Add achievement</button>
+          <div class="field"><label>Month</label><input type="month" name="month" required></div>
+          <div class="field"><label>Level completions</label><input type="number" name="count" min="0" value="1" required></div>
+          <button class="primary" type="submit">Log achievements</button>
         </form>
       </div>
       <div class="panel"><h3>Achievement log</h3><div id="badgesTableWrap"></div></div>
