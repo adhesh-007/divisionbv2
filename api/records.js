@@ -14,19 +14,17 @@ export default async function handler(req, res) {
       if (!requireAdmin(req, res)) return;
 
       if (kind === 'badges') {
-        const { club, date, award, count } = req.body || {};
-        const cleanAward = String(award || '').trim();
-        if (!club || !date || !cleanAward) {
-          res.status(400).json({ error: 'Club, date, and award/level are all required.' });
+        const { club, month, count } = req.body || {};
+        if (!club || !month || count === undefined || count === null || count === '') {
+          res.status(400).json({ error: 'Club, month, and number of level completions are all required.' });
           return;
         }
         const state = await getState();
         state.badges.push({
           id: uid(),
           club,
-          date,
-          award: cleanAward,
-          count: Number(count) > 0 ? Number(count) : 1
+          month,
+          count: Number(count) > 0 ? Number(count) : 0
         });
         await saveBadges(state.badges);
         res.status(200).json({ ok: true });
