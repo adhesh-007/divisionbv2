@@ -7,6 +7,22 @@ let isAdmin = false; // only ever true on the admin page, after a verified serve
 const DEFAULT_DIRECTORS = { B1: "TM Karthick Rajendran", B2: "Atchayashiri", B3: "Jonathan", B4: "Sunita Rajaseelan" };
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 
+// ---------- Toast (tiny save/delete confirmation) ----------
+let toastHost = null;
+function showToast(msg, tone){
+  if(!toastHost){
+    toastHost = document.createElement('div');
+    toastHost.id = 'toastHost';
+    document.body.appendChild(toastHost);
+  }
+  const el = document.createElement('div');
+  el.className = 'toast' + (tone ? ' '+tone : '');
+  el.textContent = msg;
+  toastHost.appendChild(el);
+  requestAnimationFrame(()=> el.classList.add('show'));
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=> el.remove(), 250); }, 2200);
+}
+
 async function apiGet(url){
   const res = await fetch(url);
   if(!res.ok) throw new Error('Request failed: ' + url);
@@ -30,6 +46,8 @@ async function apiSend(url, method, body){
     }
     throw new Error((data && data.error) || 'Request failed');
   }
+  if(method === 'POST') showToast('✓ Saved', 'sage');
+  if(method === 'DELETE') showToast('Removed', 'flat');
   return data;
 }
 async function refreshState(){
