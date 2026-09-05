@@ -920,7 +920,7 @@ document.getElementById('form-badges').addEventListener('submit', async (e)=>{
   const f = new FormData(e.target);
   if(!f.get('club')) return;
   try{
-    await apiSend('/api/badges', 'POST', { club: f.get('club'), date: f.get('date'), award: f.get('award'), count: Number(f.get('count'))||1 });
+    await apiSend('/api/records', 'POST', { kind:'badges', club: f.get('club'), date: f.get('date'), award: f.get('award'), count: Number(f.get('count'))||1 });
     await refreshState();
     e.target.reset(); renderAll();
   }catch(err){}
@@ -931,7 +931,7 @@ document.getElementById('form-successplan').addEventListener('submit', async (e)
   const f = new FormData(e.target);
   if(!f.get('club')) return;
   try{
-    await apiSend('/api/success-plan', 'POST', { club: f.get('club'), period: f.get('period'), status: f.get('status'), notes: f.get('notes') });
+    await apiSend('/api/records', 'POST', { kind:'successplan', club: f.get('club'), period: f.get('period'), status: f.get('status'), notes: f.get('notes') });
     await refreshState();
     e.target.reset(); renderAll();
   }catch(err){}
@@ -982,9 +982,9 @@ document.addEventListener('click', async (e)=>{
   const dc = e.target.closest('[data-del-club]');
   if(dc){ if(!requireAdmin()) return; try{ await apiSend('/api/clubs?name='+encodeURIComponent(dc.dataset.delClub), 'DELETE'); await refreshState(); renderAll(); }catch(err){} return; }
   const db = e.target.closest('[data-del-badges]');
-  if(db){ if(!requireAdmin()) return; try{ await apiSend('/api/badges?id='+encodeURIComponent(db.dataset.delBadges), 'DELETE'); await refreshState(); renderAll(); }catch(err){} return; }
+  if(db){ if(!requireAdmin()) return; try{ await apiSend('/api/records?kind=badges&id='+encodeURIComponent(db.dataset.delBadges), 'DELETE'); await refreshState(); renderAll(); }catch(err){} return; }
   const dsp = e.target.closest('[data-del-successplan]');
-  if(dsp){ if(!requireAdmin()) return; try{ await apiSend('/api/success-plan?id='+encodeURIComponent(dsp.dataset.delSuccessplan), 'DELETE'); await refreshState(); renderAll(); }catch(err){} return; }
+  if(dsp){ if(!requireAdmin()) return; try{ await apiSend('/api/records?kind=successplan&id='+encodeURIComponent(dsp.dataset.delSuccessplan), 'DELETE'); await refreshState(); renderAll(); }catch(err){} return; }
 });
 
 // ============================================================
