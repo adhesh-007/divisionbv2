@@ -718,12 +718,12 @@ function renderMentors(){
 function renderBadges(){
   const wrap = document.getElementById('badgesTableWrap');
   if(state.badges.length===0){ wrap.innerHTML = `<div class="empty">No education achievements logged yet.</div>`; return; }
-  const rows = [...state.badges].sort((a,b)=> a.date<b.date?1:-1);
+  const rows = [...state.badges].sort((a,b)=> a.month<b.month?1:-1);
   wrap.innerHTML = `<table><thead><tr>
-    <th>Club</th><th>Date</th><th>Award / Level</th><th>Count</th><th></th>
+    <th>Club</th><th>Month</th><th>Level Completions</th><th></th>
   </tr></thead><tbody>
   ${rows.map(r=>`<tr>
-    <td>${escapeHtml(r.club)}</td><td>${r.date}</td><td>${escapeHtml(r.award)}</td><td>${r.count||1}</td>
+    <td>${escapeHtml(r.club)}</td><td>${r.month}</td><td>${r.count||0}</td>
     <td><button class="ghost admin-only" data-del-badges="${r.id}">Remove</button></td>
   </tr>`).join('')}
   </tbody></table>`;
@@ -938,7 +938,7 @@ document.getElementById('form-badges').addEventListener('submit', async (e)=>{
   const f = new FormData(e.target);
   if(!f.get('club')) return;
   try{
-    await apiSend('/api/records', 'POST', { kind:'badges', club: f.get('club'), date: f.get('date'), award: f.get('award'), count: Number(f.get('count'))||1 });
+    await apiSend('/api/records', 'POST', { kind:'badges', club: f.get('club'), month: f.get('month'), count: Number(f.get('count'))||0 });
     await refreshState();
     e.target.reset(); renderAll();
   }catch(err){}
@@ -1336,13 +1336,13 @@ function exportToExcel(){
   XLSX.utils.book_append_sheet(wb, wsStrengthLog, 'Club Strength Log');
 
   // --- Sheet 11: Education Achievements ---
-  const badgeRows = [['Club', 'Date', 'Award / Level', 'Count']];
-  [...state.badges].sort((a,b)=> a.date<b.date?1:-1).forEach(r=>{
-    badgeRows.push([r.club, r.date, r.award, r.count||1]);
+  const badgeRows = [['Club', 'Month', 'Level Completions']];
+  [...state.badges].sort((a,b)=> a.month<b.month?1:-1).forEach(r=>{
+    badgeRows.push([r.club, r.month, r.count||0]);
   });
-  if(badgeRows.length===1) badgeRows.push(['No achievements logged yet','','','']);
+  if(badgeRows.length===1) badgeRows.push(['No achievements logged yet','','']);
   const wsBadges = XLSX.utils.aoa_to_sheet(badgeRows);
-  wsBadges['!cols'] = [{wch:32},{wch:12},{wch:28},{wch:8}];
+  wsBadges['!cols'] = [{wch:32},{wch:12},{wch:18}];
   XLSX.utils.book_append_sheet(wb, wsBadges, 'Education Achievements');
 
   // --- Sheet 12: Club Success Plan ---
